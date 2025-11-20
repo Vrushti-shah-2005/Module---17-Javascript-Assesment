@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Interaction Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      padding-right: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #aaa;
+    }
+    label { font-weight: bold; }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0 15px;
+    }
+    #msg {
+      padding: 10px;
+      display: none;
+      border-radius: 5px;
+    }
+    .success { background: #d4ffd4; color: #006600; }
+    .error { background: #ffd4d4; color: #990000; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Customer Interaction Form</h2>
+
+    <div id="msg"></div>
+
+    <form id="customerForm">
+      <label>Full Name</label>
+      <input type="text" id="name" required />
+
+      <label>Phone Number</label>
+      <input type="number" id="phone" required />
+
+      <label>Email Address</label>
+      <input type="email" id="email" required />
+
+      <label>Vehicle Details</label>
+      <input type="text" id="vehicle" required />
+
+      <label>Complaint / Issue</label>
+      <textarea id="complaint" rows="4"></textarea>
+
+      <button type="submit">Submit</button>
+      <button type="button" onclick="window.location.href='view.html'">
+         View Submissions
+      </button>
+    </form>
+  </div>
+
+  <script type="module">
+    import CustomerFormHandler from './script.js';
+
+    const form = document.getElementById("customerForm");
+    const handler = new CustomerFormHandler(form);
+
+    form.addEventListener("submit", (e) => handler.handleSubmit(e));
+
+    // Real-time validation
+    form.addEventListener("input", (e) => handler.validateField(e.target.id));
+  </script>
+
+  
+
+
+</body>
+</html>

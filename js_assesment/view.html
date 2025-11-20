@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Submissions</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: left;
+    }
+    th { background: #f0f0f0; }
+    button {
+      padding: 5px 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #noData { color: red; display: none; }
+  </style>
+</head>
+<body>
+
+  <h2>Customer Submissions</h2>
+
+  <input type="text" id="search" placeholder="Search Name or Vehicle" />
+
+  <p id="noData">No data found</p>
+
+  <table id="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>Vehicle</th>
+        <th>Complaint</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    class SubmissionViewer {
+      constructor() {
+        this.tableBody = document.querySelector("#table tbody");
+        this.noData = document.getElementById("noData");
+        this.data = JSON.parse(localStorage.getItem("customerData")) || [];
+
+        this.renderTable(this.data);
+
+        document
+          .getElementById("search")
+          .addEventListener("input", (e) => this.search(e.target.value));
+
+        // Event Delegation for Delete Buttons
+        this.tableBody.addEventListener("click", (e) => {
+          if (e.target.classList.contains("delete-btn")) {
+            const index = e.target.dataset.index;
+            this.deleteRecord(index);
+          }
+        });
+      }
+
+      renderTable(records) {
+        this.tableBody.innerHTML = "";
+
+        if (records.length === 0) {
+          this.noData.style.display = "block";
+          return;
+        } else {
+          this.noData.style.display = "none";
+        }
+
+        records.forEach((item, index) => {
+          const row = `
+            <tr>
+              <td>${item.name}</td>
+              <td>${item.phone}</td>
+              <td>${item.email}</td>
+              <td>${item.vehicle}</td>
+              <td>${item.complaint}</td>
+              <td><button class="delete-btn" data-index="${index}">Delete</button></td>
+            </tr>
+          `;
+          this.tableBody.insertAdjacentHTML("beforeend", row);
+        });
+      }
+
+      deleteRecord(index) {
+        if (!confirm("Are you sure you want to delete this record?")) return;
+
+        this.data.splice(index, 1); // remove data
+        localStorage.setItem("customerData", JSON.stringify(this.data)); // update storage
+        this.renderTable(this.data); // refresh table
+      }
+
+      search(text) {
+        const filtered = this.data.filter((item) =>
+          item.name.toLowerCase().includes(text.toLowerCase()) ||
+          item.vehicle.toLowerCase().includes(text.toLowerCase())
+        );
+
+        this.renderTable(filtered);
+      }
+    }
+
+    new SubmissionViewer();
+  </script>
+
+</body>
+</html>
